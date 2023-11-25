@@ -1,4 +1,3 @@
-const Information = require('../models/model')
 const Person = require('../models/model')
 
 const RenderInformation = (req, res, next) => {
