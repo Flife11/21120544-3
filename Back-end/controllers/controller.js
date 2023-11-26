@@ -13,7 +13,7 @@ const RenderHome = async(req, res, next) => {
 const RenderDetail = async(req, res, next) => {
     try {
         const id = req.params.id;
-        // console.log(id);
+        console.log(id);
         if (!(id===undefined) && id.match(/21544\{ (.*?)\ }/g)===null) {
             // console.log(id, 1);
             try {
@@ -34,10 +34,12 @@ const RenderSearch = async(req, res, next) => {
     try {
         const name = req.params.name;
         const page = req.params.page;
-        // console.log(req.params);
-        const Movies = await Movie.search(name, page);
-        // console.log(Movies);
-        res.render('home', {"Movies": Movies});
+        if (!(page==='undefined')) {
+            console.log(req.params);
+            const Movies = await Movie.search(name, page);
+            // console.log(Movies);
+            res.render('search', Movies);
+        }
     } catch(error) {
         next(error);
     }

@@ -68,8 +68,10 @@ module.exports = class Movie{
         try {            
             // console.log(name, offset);
             const data = await db.search(name, offset, 'Movie', 'title');
+            const length = data.length;
+            const n = Array.from({ length: length / 9 + ((length%9==0) ? 0 : 1)}, (_, i) => i + 1);
             // console.log(data);
-            return data;
+            return {"Movies": data, n: n};
         } catch (error) {
             // console.log(error);
             throw error;

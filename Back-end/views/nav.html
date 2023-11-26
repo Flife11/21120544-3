@@ -21,13 +21,13 @@
     </nav>
 
     <script>
-        const handleClick = function(){
+        const Search = function(){
             var value = $('input').val();
             console.log(value);
             fetch(`http://localhost:3001/search/${value}/0`);
             // this.$emit('changeToSearch', value);
         }
-        $('.btn-search').on('click', handleClick);
+        $('.btn-search').on('click', Search);
     </script>
 </body>
 </html>

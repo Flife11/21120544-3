@@ -23,18 +23,21 @@ const funcIfElse1 = (match, condition, T, F) => {
     return options[condition.trim()] ? T : F;
 };
 
-const funcFor1 = async(match, p1, arr='default', render) => {  
-    render = render.replace(new RegExp(`\{ ${p1.trim()}\.`, 'g'), "{ ");
-    // console.log(render, 1);
+const funcFor1 = (match, p1, arr='default', render) => {  
+    // console.log(match, 3)
+    // console.log(render, 3);
     // console.log(p1);
     const keys = []
+    render = render.replace(new RegExp(`\{ ${p1.trim()}\.`, 'g'), "{ ");
     render.replace(/21544\{ (.*?) \}/g, (match, key) => keys.push(key));
-    // console.log(keys, p1);
-    if (keys.length===0) {
-        let result = '';
-        // console.log(arr, 1, options[arr.trim()]);
+    console.log(keys);
+    console.log(render);
+    if (keys[0]===p1) {
+        let result = '';        
+        console.log(arr, 1, options[arr.trim()]);
+        // console.log(options);
         for (let d of options[arr.trim()]) {
-            result += render.replace(/21544\{(.*?)\}/g, d);
+            result += render.replace(/21544\{ (.*?) \}/g, d);
         }
         return result
     } else {
@@ -47,8 +50,10 @@ const funcFor1 = async(match, p1, arr='default', render) => {
                 options[key] = options[arr.trim()][index][key]
                 // console.log(options[key], key, item[key])
             }
-            let r = await editContent(render);
-            result += r.replace(/21544\{(.*?)\}/g, funcVar);
+            // let r = await editContent(render);
+            result += render.replace(/21544\{ (.*?) \}/g, funcVar);
+            // console.log(r, 3);
+            // console.log(r.replace(/21544\{ (.*?) \}/g, funcVar), 4);
         }
         return result
     }
@@ -61,7 +66,8 @@ const asyncReplace =  async(str, regex, asyncFn) => {
     let promises = [];
     if (str.match(regex)) {
         str.replace(regex, function(match, ...args){
-            // console.log(args, 1);
+            console.log(args, 1);
+            console.log(args.length);
             let promise = asyncFn(match, ...args);
             // console.log(promise, "inasync");
             promises.push(promise);
@@ -79,22 +85,23 @@ const editContent = async(content) => {
     const regFor1 = /21544\{for (.*?) in (.*?)\}([\s\S]*?)\{\/for\}/g
     const regComp = /21544\{\+.*?\}/g
     
-    // content = content.replace(regFor1, funcFor1);
-    content = await asyncReplace(content, regFor1, funcFor1).then(matches => {
-        let res = '';
-        for (let match of matches) {
-            // console.log(match, 2);
-            res += match;
-        }
-        content = content.replace(regFor1, res);
-        // console.log(res);
-        // console.log(content);
-        return content;
-    });
+    content = content.replace(regFor1, funcFor1);
+    // content = await asyncReplace(content, regFor1, funcFor1).then(matches => {
+    //     let res = '';
+    //     console.log(matches, 4);
+    //     for (let match of matches) {
+    //         console.log(match, 2);
+    //         res += match;
+    //     }
+    //     content = content.replace(regFor1, res);
+    //     // console.log(res);
+    //     // console.log(content);
+    //     return content;
+    // });
     // console.log("end");
-    // console.log(typeof(content), content);
     content = content.replace(regIfElse1, funcIfElse1);
     content = content.replace(regVar, funcVar);
+    // console.log(typeof(content), content);
     // console.log(typeof(content), content);
 
     let matches = content.match(regComp);
