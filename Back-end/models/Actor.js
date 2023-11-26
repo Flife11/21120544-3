@@ -1,9 +1,8 @@
 const db = require('../ulliti/db') 
-const tbName = 'Movie';
+const tbName = 'Actor';
 
-module.exports = class Movie{
+module.exports = class Actor{
     constructor() {  
-        const columnA = ['id', '', '', 'image', '', ''];
         this.name = ""
         this.role = "";
         this.image = "";
@@ -21,6 +20,13 @@ module.exports = class Movie{
 
     static async getAll(){
         const data = await db.getAll(tbName);
+        return data;
     }
 
+    static async get(id) {
+        // console.log(id, "actor");
+        const data = await db.get(id, 'Actor');
+        // console.log(data);
+        return data;
+    }
 }

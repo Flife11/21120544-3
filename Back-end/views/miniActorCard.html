@@ -10,24 +10,17 @@
     <title>Document</title>
 </head>
 <body>
-    <nav class="navbar bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand">Navbar</a>
-            <div class="d-flex" role="search">
-                <input class="form-control me-2 Search" type="search" placeholder="Search" aria-label="Search">
-                <button click="handleClick" class="btn btn-outline-success btn-search" type="submit">Search</button>
+    <h2 class="">CAST</h2>
+    <div class="d-flex flex-wrap">
+        21544{for a in actorList}
+            <div class="d-flex align-items-center mini-actor-wrapper">
+                <img src="21544{ a.image }" class="img-thumbnail" alt="21544{ a.id }">
+                <div class="mini-actor-card" style="max-width: 400px;">
+                    <div class="card-header fs-3"> 21544{ a.name } </div>
+                    <div class="fs-5"> 21544{ a.asCharacter } </div>
+                </div>
             </div>
-        </div>
-    </nav>
-
-    <script>
-        const handleClick = function(){
-            var value = $('input').val();
-            console.log(value);
-            fetch(`http://localhost:3001/search/${value}/0`);
-            // this.$emit('changeToSearch', value);
-        }
-        $('.btn-search').on('click', handleClick);
-    </script>
+        {/for}
+    </div>
 </body>
 </html>

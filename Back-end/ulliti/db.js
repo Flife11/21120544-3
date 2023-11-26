@@ -35,9 +35,13 @@ const waitForExist = async(checkExist, callback, checkParam, callbackParam) => {
 }
 
 const insertData = async(d, table, column) => {
+    const arrayColumn = ['genreList']
     const data = d.map((m, index) => {
         let newM = {}
         for (let key of column) {
+            if (arrayColumn.includes(key)) {
+                newM[key] = pgp.as.array(m[key]);
+            }
             newM[key] = m[key]
         }
         return newM;
@@ -78,10 +82,15 @@ const createTable = async() => {
             "releaseDate" character varying(20) ,
             "imDbRating" character varying(20) ,
             "boxOffice" character varying(20) ,
-            "plotFull" character varying(5000) ,
+            "plot" character varying(5000) ,
+            "genreList" character varying(500)[],
+            "actorList" character varying(500)[],
+            companies character varying(500),
             CONSTRAINT "Movie_pkey" PRIMARY KEY (id)
         )`
-        db.query(queryM);        
+        db.query(queryM);    
+        const columnM = ['id', 'title', 'fullTitle', 'year', 'image', 
+        'releaseDate', 'imDbRating', 'boxOffice', 'plot', 'genreList', 'actorList', 'companies']            
         
         // ---Actor        
         const queryA = `CREATE TABLE IF NOT EXISTS public."Actor"
@@ -95,6 +104,7 @@ const createTable = async() => {
             CONSTRAINT "Actor_pkey" PRIMARY KEY (id)
         )`
         db.query(queryA);
+        const columnA = ['id', 'name', 'role', 'image', 'summary', 'birthDate'];
 
         // ---Movie_Actor
         
@@ -113,8 +123,6 @@ const createTable = async() => {
         };
 
         // -------Insert
-        const columnM = ['id', 'title', 'fullTitle', 'year', 'image', 'releaseDate', 'imDbRating', 'boxOffice', 'plotFull']        
-        const columnA = ['id', 'name', 'role', 'image', 'summary', 'birthDate'];
         waitForExist(doesTableExist, insertData, ['Movie'], [data.Movies, 'Movie', columnM]);
         waitForExist(doesTableExist, insertData, ['Actor'], [data.Names, 'Actor', columnA]);
 
@@ -168,6 +176,64 @@ module.exports = {
             const data = await db.any(query)
             // data = JSON.parse(data);
             // console.log(data);
+            return data;
+        } catch (error) {
+            throw error
+        } finally {
+            dbcn.done();
+        }
+    },
+    get3BoxOffice: async (index) => {
+        let dbcn = null;
+        try {
+            dbcn = await db.connect();
+            const query = `SELECT title, "boxOffice"
+            FROM
+                (SELECT title, "boxOffice"
+                FROM "Movie"
+                WHERE "boxOffice" IS NOT NULL
+                ORDER BY "boxOffice" DESC
+                LIMIT 15)
+            LIMIT 3
+            OFFSET ${index};`
+            const data = await db.any(query)
+            // data = JSON.parse(data);
+            // console.log(data);
+            return data;
+        } catch (error) {
+            throw error
+        } finally {
+            dbcn.done();
+        }
+    },
+    get: async (id, tbName) => {
+        let dbcn = null;
+        try {
+            // if (tbName=='Actor') console.log(id);
+            dbcn = await db.connect();
+            const query = `SELECT * FROM "${tbName}" WHERE id='${id}'`;
+            const data = await db.one(query);
+            return data;
+        } catch (error) {
+            throw error
+        } finally {
+            dbcn.done();
+        }
+    },
+    search: async (name, offset, tbName, colName) => {
+        let dbcn = null;
+        try {
+            // console.log(name, offset, tbName, colName)
+            dbcn = await db.connect();
+            const query = `
+            SELECT * 
+            FROM
+                (SELECT *
+                FROM "${tbName}"
+                WHERE "${colName}" LIKE '%${name}%')
+            LIMIT 9
+            OFFSET ${offset*9};`
+            const data = await db.any(query);
             return data;
         } catch (error) {
             throw error

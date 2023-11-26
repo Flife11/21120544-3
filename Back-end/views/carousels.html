@@ -12,11 +12,18 @@
 <body>
     <div id="carouselExample" class="carousel slide">
         <div class="carousel-inner">
-            21544{for d in Movies}                
-                <a href="#" class="carousel-item">
-                    <img src="21544{d.image}" class="carousel-image mx-auto p-2 d-block h-75 d-inline-block w-50 p-2" alt="21544{d.id}"/>
-                    <div class="title position-absolute start-50 translate-middle">21544{d.fullTitle}</div>
-                </a>
+            21544{for d in Movies}
+                21544{if index}
+                    <a href="/detail/21544{ d.id }" class="carousel-item active position-relative" id="21544{ d.i }">
+                        <img src="21544{ d.image }" class="carousel-image mx-auto p-2 d-block h-75 d-inline-block w-50 p-2" alt="21544{ d.id }"/>
+                        <div class="title position-absolute start-50 translate-middle">21544{ d.fullTitle }</div>
+                    </a>
+                {else}
+                    <a href="/detail/21544{ d.id }" class="carousel-item" id="21544{ d.i }">
+                        <img src="21544{ d.image }" class="carousel-image mx-auto p-2 d-block h-75 d-inline-block w-50 p-2" alt="21544{ d.id }"/>
+                        <div class="title position-absolute start-50 translate-middle">21544{ d.fullTitle }</div>
+                    </a>
+                {/if}
             {/for}
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
@@ -30,6 +37,20 @@
     </div>
 
     <script>
+        // const detail = function(e) {
+        //     // e.preventDefault();
+        //     const id = $(e.target).attr('alt');
+        //     console.log($(e.target).attr('alt'));
+        //     fetch(`http://127.0.0.1:3001/detail/${id}`, {
+        //         method: 'GET',
+        //         headers: {
+        //             "Content-Type": "application/json",
+        //             "Accept": "application/json",
+        //             "Access-Control-Allow-Origin": "*",
+        //         }
+        //     })
+        // }
+        // $('.carousel-item').on('click', detail)
         const handleCLickPrev = function(){
             var ID = $('.active').attr('id');
             $('.active').removeClass('active');
@@ -44,11 +65,9 @@
             var newID = (parseInt(ID)+1)%5;        
             $(`#${newID}`).addClass('active');
         }; 
-        $('.carousel-control-next').on('click', handleCLickNext);       
-        const detail = function(item) {
-            // this.$emit('detailMovie', item.id);
-        }
-        $('.carousel-item').on('click', detail)
+        $('.carousel-control-next').on('click', handleCLickNext); 
+
+        
     </script>
 </body>
 </html>

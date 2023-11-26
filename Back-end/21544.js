@@ -19,35 +19,54 @@ const funcVar = (match, p1) => {
 };
 
 const funcIfElse1 = (match, condition, T, F) => {
+    // console.log(condition, options[condition.trim()])
     return options[condition.trim()] ? T : F;
 };
 
-const funcFor1 = async(match, p1, arr, render) => {
-    let result = '';  
-    render = render.replace(new RegExp(`\{${p1.trim()}\.`, 'g'), "{");
-    render = await editContent(render);
+const funcFor1 = async(match, p1, arr='default', render) => {  
+    render = render.replace(new RegExp(`\{ ${p1.trim()}\.`, 'g'), "{ ");
     // console.log(render, 1);
+    // console.log(p1);
     const keys = []
-    render.replace(/21544\{(.*?)\}/g, (match, key) => keys.push(key));
-    for (let item of options.data) {
-        for (let key of keys) {
-            options[key] = item[key]
-            // console.log(options[key], key, item[key])
+    render.replace(/21544\{ (.*?) \}/g, (match, key) => keys.push(key));
+    // console.log(keys, p1);
+    if (keys.length===0) {
+        let result = '';
+        // console.log(arr, 1, options[arr.trim()]);
+        for (let d of options[arr.trim()]) {
+            result += render.replace(/21544\{(.*?)\}/g, d);
         }
-        result += render.replace(/21544\{(.*?)\}/g, funcVar);
+        return result
+    } else {
+        let result = '';
+        for (let index in options[arr.trim()]) {
+            if (index==0) options.index = true;
+            else options.index = false;
+            options[arr.trim()][index]['i'] = index;
+            for (let key of keys) {
+                options[key] = options[arr.trim()][index][key]
+                // console.log(options[key], key, item[key])
+            }
+            let r = await editContent(render);
+            result += r.replace(/21544\{(.*?)\}/g, funcVar);
+        }
+        return result
     }
+
     // console.log(typeof result)
-    return result;
+    // return result;
 };
 
 const asyncReplace =  async(str, regex, asyncFn) => {
     let promises = [];
     if (str.match(regex)) {
-        str.replace(regex, (match, ...args) => {
-            // console.log(match, 1);
+        str.replace(regex, function(match, ...args){
+            // console.log(args, 1);
             let promise = asyncFn(match, ...args);
+            // console.log(promise, "inasync");
             promises.push(promise);
         });
+        // console.log("hello" ,str);
         return Promise.all(promises);
     }
     return Promise.all([str]);
@@ -56,23 +75,31 @@ const asyncReplace =  async(str, regex, asyncFn) => {
 const editContent = async(content) => {
     // console.log(typeof(content), content);
     const regVar = /21544\{ (.*?) \}/g
-    const regIfElse1 = /21544\{if (.*?) \}([\s\S]*?)\{else\}([\s\S]*?)\{\/if\}/sg;
-    const regFor1 = /21544\{for (.*?) in (.*?)\}([\s\S]*?)\{\/for\}/sg
+    const regIfElse1 = /21544\{if (.*?)\}([\s\S]*?)\{else\}([\s\S]*?)\{\/if\}/sg;
+    const regFor1 = /21544\{for (.*?) in (.*?)\}([\s\S]*?)\{\/for\}/g
     const regComp = /21544\{\+.*?\}/g
-    content = content.replace(regIfElse1, funcIfElse1);
+    
     // content = content.replace(regFor1, funcFor1);
     content = await asyncReplace(content, regFor1, funcFor1).then(matches => {
         let res = '';
         for (let match of matches) {
+            // console.log(match, 2);
             res += match;
         }
-        return res;
+        content = content.replace(regFor1, res);
+        // console.log(res);
+        // console.log(content);
+        return content;
     });
-    console.log(typeof(content), content);
+    // console.log("end");
+    // console.log(typeof(content), content);
+    content = content.replace(regIfElse1, funcIfElse1);
     content = content.replace(regVar, funcVar);
+    // console.log(typeof(content), content);
 
     let matches = content.match(regComp);
-    console.log(matches);
+    // console.log(matches);
+
     if (matches!=null) {
         for (let match of matches) {
             let partName = match.trim();
@@ -92,7 +119,9 @@ const editContent = async(content) => {
 
 const template = async (filePath, opt, callback) => { 
     options = opt;
+    // console.log(opt);
     let content = await fs.readFile(filePath, { encoding: 'utf-8' });
+    // console.log(content);
     content = await editContent(content);
     return callback(null, content);
 }

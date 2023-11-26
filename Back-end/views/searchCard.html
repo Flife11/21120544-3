@@ -10,24 +10,18 @@
     <title>Document</title>
 </head>
 <body>
-    <nav class="navbar bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand">Navbar</a>
-            <div class="d-flex" role="search">
-                <input class="form-control me-2 Search" type="search" placeholder="Search" aria-label="Search">
-                <button click="handleClick" class="btn btn-outline-success btn-search" type="submit">Search</button>
+    <div class="card mb-3" style="max-width: 380px;">
+        <div class="row g-0">
+            <div>
+                <img src="21544{ image }" class="img-fluid rounded-start" alt="Error">
+            </div>
+            <div class="card-body" style="height: 180px;">                    
+                <div class="card-title fs-3">21544{ title }</div>                                           
+                <div class="fs-5">
+                    IMDB: 21544{ imDbRating }
+                </div>                                               
             </div>
         </div>
-    </nav>
-
-    <script>
-        const handleClick = function(){
-            var value = $('input').val();
-            console.log(value);
-            fetch(`http://localhost:3001/search/${value}/0`);
-            // this.$emit('changeToSearch', value);
-        }
-        $('.btn-search').on('click', handleClick);
-    </script>
+    </div>
 </body>
 </html>

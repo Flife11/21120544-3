@@ -5,7 +5,9 @@ const port = process.env.PORT | 3001;
 const router = require('./routes/route.js')
 const {template} = require('./21544.js')
 const fs = require('fs/promises');
+let cors = require("cors");
 
+app.use(cors());
 app.use(express.urlencoded({ extended: true }))
 
 app.set('views', __dirname+'/views');

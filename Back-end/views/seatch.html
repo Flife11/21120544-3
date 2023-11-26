@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <link rel="stylesheet" href="style.css">
+        <script src="https://kit.fontawesome.com/6879b33e1d.js" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <title>Document</title>
+    </head>
+<body>
+    21544{+header}
+    21544{+nav}
+
+    21544{for m in Movies}
+        <div class="d-flex flex-wrap justify-content-between">
+            {+searchCard}
+        </div>
+    {/for}
+
+    <nav class="d-flex justify-content-center" aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item">
+            <a class="page-link Previous" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+            </li>
+            21544{for it in n}
+                21544{if it}
+                    <li class="page-item"><a class="page-link Link active" href="#">21544{ index }</a></li>
+                {else}
+                    <li class="page-item"><a class="page-link Link active" href="#">21544{ index }</a></li>
+                {/if}
+            {/for}
+            
+            <li class="page-item">
+            <a class="page-link Next" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+            </li>
+        </ul>
+    </nav>
+
+    <script>
+        const handleClick = function(e) {
+            $(".active").removeClass("active");
+            $(e.target).addClass("active");
+            var page = parseInt($(e.target).html());
+            // this.getData(this.pattern, page);
+        }
+        $('.Link').on('click', handleClick);
+        const handleCLickPrev = function(){
+            var curPage = $(".active").html();
+            if (curPage!=1) curPage -= 1;
+            // this.getData(this.pattern, curPage);
+
+            $(`.active`).removeClass('active');
+            $(`.page-link`).get().forEach((element, index) => {
+                if (parseInt($(element).html())==curPage) $(element).addClass('active');
+            });
+        }
+        $('.Previous').on('click', handleCLickPrev);
+        const handleCLickNext = function(){
+            var curPage = parseInt($(`.active`).html());
+            if (curPage!=this.data.total_page) curPage += 1;
+            // this.getData(this.pattern, curPage);
+
+            $(`.page-link`).removeClass('active');
+            $(`.page-link`).get().forEach((element, index) => {
+                if (parseInt($(element).html())==curPage) $(element).addClass('active');
+            });
+        }
+        $('.Next').on('click', handleCLickNext);
+    </script>
+</body>
+</html>
