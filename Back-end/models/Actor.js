@@ -1,11 +1,14 @@
 const db = require('../ulliti/db') 
-const tbName = 'test';
+const tbName = 'Movie';
 
-module.exports = class Information{
-    constructor() {
-        this.name = "";
-        this.email = "";
-        this.phone = "";
+module.exports = class Movie{
+    constructor() {  
+        const columnA = ['id', '', '', 'image', '', ''];
+        this.name = ""
+        this.role = "";
+        this.image = "";
+        this.summary = "";
+        this.birthDate = "";
     }
     copy(p) {
         for (var attr in p) {
