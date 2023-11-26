@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/6879b33e1d.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="carouselExample" class="carousel slide">
+        <div class="carousel-inner">
+            21544{for d in Movies}                
+                <a href="#" class="carousel-item">
+                    <img src="21544{d.image}" class="carousel-image mx-auto p-2 d-block h-75 d-inline-block w-50 p-2" alt="21544{d.id}"/>
+                    <div class="title position-absolute start-50 translate-middle">21544{d.fullTitle}</div>
+                </a>
+            {/for}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <script>
+        const handleCLickPrev = function(){
+            var ID = $('.active').attr('id');
+            $('.active').removeClass('active');
+            var newID = (ID-1+5)%5;
+            $(`#${newID}`).addClass('active');
+        };
+        $('.carousel-control-prev').on('click', handleCLickPrev);
+
+        const handleCLickNext = function(){
+            var ID = $('.active').attr('id');
+            $('.active').removeClass('active');
+            var newID = (parseInt(ID)+1)%5;        
+            $(`#${newID}`).addClass('active');
+        }; 
+        $('.carousel-control-next').on('click', handleCLickNext);       
+        const detail = function(item) {
+            // this.$emit('detailMovie', item.id);
+        }
+        $('.carousel-item').on('click', detail)
+    </script>
+</body>
+</html>

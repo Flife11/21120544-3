@@ -21,8 +21,9 @@ module.exports = class Movie{
         db.insert(this, tbName);
     }
 
-    static async getAll(){
-        const data = await db.getAll(tbName);
+    static async getRatingMovie(){
+        const data = await db.getRatingMovie(15);
+        return data;
     }
 
 }

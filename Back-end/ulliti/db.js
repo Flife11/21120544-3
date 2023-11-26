@@ -156,12 +156,18 @@ const checkExistDatabase = async() => {
 checkExistDatabase();
 
 module.exports = {
-    getAll: async (tName) => {
+    getRatingMovie: async (limit) => {
         let dbcn = null;
         try {
             dbcn = await db.connect();
-            const data = await db.any(`SELECT * FROM ${tName}`)
-            console.log(JSON.stringify(data))
+            const query = `SELECT *
+            FROM "Movie"
+            WHERE "imDbRating" IS NOT NULL
+            ORDER BY "imDbRating" DESC
+            LIMIT ${limit};`
+            const data = await db.any(query)
+            // data = JSON.parse(data);
+            // console.log(data);
             return data;
         } catch (error) {
             throw error
