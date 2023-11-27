@@ -66,4 +66,16 @@ const RenderReview = async(req, res, next) => {
     }
 }
 
-module.exports = {RenderHome, RenderDetail, RenderSearch, RenderReview};
+const RenderFav = async(req, res, next) => {
+    try {
+        const page = req.params.page;
+        // console.log(id);
+        const Fav = await Movie.getFavMovie(page);
+            // console.log(Reviews);
+        res.render('fav', Fav);
+    } catch(error) {
+        next(error);
+    }
+}
+
+module.exports = {RenderHome, RenderDetail, RenderSearch, RenderReview, RenderFav};

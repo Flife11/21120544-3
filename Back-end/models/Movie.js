@@ -76,4 +76,21 @@ module.exports = class Movie{
             throw error;
         }
     }
+
+    static async updateFav(id) {
+        try {            
+            db.updateFav(id);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getFavMovie() {
+        try {            
+            const data = await db.getFavMovie();
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

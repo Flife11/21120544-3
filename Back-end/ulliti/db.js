@@ -86,11 +86,12 @@ const createTable = async() => {
             "genreList" character varying(500)[],
             "actorList" character varying(500)[],
             companies character varying(500),
+            "fav" boolean,
             CONSTRAINT "Movie_pkey" PRIMARY KEY (id)
         )`
         db.query(queryM);    
         const columnM = ['id', 'title', 'fullTitle', 'year', 'image', 
-        'releaseDate', 'imDbRating', 'boxOffice', 'plot', 'genreList', 'actorList', 'companies']            
+        'releaseDate', 'imDbRating', 'boxOffice', 'plot', 'genreList', 'actorList', 'companies', 'fav'];
         
         // ---Actor        
         const queryA = `CREATE TABLE IF NOT EXISTS public."Actor"
@@ -307,7 +308,7 @@ module.exports = {
             const query2 = `SELECT * FROM "Review" WHERE "movieID"='${movieID}'`
             const full = await db.any(query2);
             const length = full.length;
-            console.log(offset);
+            // console.log(offset);
             if (offset<0) offset = 0;
             if (offset*4>=length && offset!=0) offset-=1;
             // console.log(offset, length);
@@ -318,7 +319,7 @@ module.exports = {
             LIMIT 4
             OFFSET ${offset*4};`
             const data = await db.any(query);
-            console.log(data.length, 1);
+            // console.log(data.length, 1);
 
             const n = Array.from({ length: length / 4 + ((length%4==0) ? 0 : 1)}, (_, i) => i + 1);
             return {"Reviews": data, n: n};
@@ -335,6 +336,39 @@ module.exports = {
             return data;
         } catch (error) {
             throw error
+        }
+    },
+    updateFav: async(id) => {
+        try {
+            const query = `UPDATE "Movie" WHERE id=${id} SET fav=true`;
+            db.none(query);
+        } catch (error) {
+            throw error
+        }
+    },
+    getFavMovie: async(offset) => {
+        let dbcn = null;
+        try {
+            // console.log(name, offset, tbName, colName)
+            dbcn = await db.connect();
+            const query2 = `(SELECT * FROM "Movie" WHERE fav=true)`
+            const full = await db.any(query2);
+            const length = full.length;
+            if (offset<0) offset = 0;
+            if (offset*9>=length) offset-=1;
+            const query = `
+            SELECT * 
+            FROM (SELECT * FROM "Movie" WHERE fav=true)
+            LIMIT 9
+            OFFSET ${offset*9};`
+            const data = await db.any(query);
+
+            const n = Array.from({ length: length / 9 + ((length%9==0) ? 0 : 1)}, (_, i) => i + 1);
+            return {"Fav": data, n: n};
+        } catch (error) {
+            throw error
+        } finally {
+            dbcn.done();
         }
     }
 }
