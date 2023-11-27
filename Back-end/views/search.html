@@ -10,14 +10,15 @@
         <title>Document</title>
     </head>
 <body>
-
+    21544{+header}
+    21544{+nav}
     <div class="d-flex flex-wrap justify-content-between">
         21544{for m in Movies}
             <div class="card mb-3" style="max-width: 380px;">
                 <div class="row g-0">
-                    <div>
+                    <a href="/detail/21544{ m.id }">
                         <img src="21544{ m.image }" class="img-fluid rounded-start" alt="Error">
-                    </div>
+                    </a>
                     <div class="card-body" style="height: 180px;">                    
                         <div class="card-title fs-3">21544{ m.title }</div>                                           
                         <div class="fs-5">
@@ -37,7 +38,7 @@
             </a>
             </li>
             21544{for it in n}
-                <li class="page-item"><a class="page-link Link active" href="#">21544{ it.it }</a></li>
+                <li class="page-item"><div class="page-link Link active">21544{ it.it }</div></li>
             {/for}
             
             <li class="page-item">
@@ -49,17 +50,55 @@
     </nav>
 
     <script>
+        var myInput = document.getElementById("myInput");
+        const url = window.location.href;
+        let value = "";
+        
+        window.onload = function() {
+            if (sessionStorage.getItem("autosave")) {
+                myInput.value = sessionStorage.getItem("autosave");
+                // console.log(myInput.value);
+            }
+            
+            let curPage = null
+            url.replace(/^http:\/\/localhost:3001\/search\/(.*?)\/(.*?)$/, (match, value, page) => {
+                curPage = parseInt(page)+1;
+            })
+            $(`.active`).removeClass('active');
+            $(`.page-link`).get().forEach((element, index) => {
+                if (parseInt($(element).html())==curPage) $(element).addClass('active');
+            });    
+        }
+    
+
         const handleClick = function(e) {
+            e.preventDefault();
             $(".active").removeClass("active");
             $(e.target).addClass("active");
             var page = parseInt($(e.target).html());
+            var value = $('input').val();
+            fetch(`http://localhost:3001/search/${value}/${page-1}`)
+            .then(response => {
+                window.location.href = `http://localhost:3001/search/${value}/${page-1}`;
+            })
             // this.getData(this.pattern, page);
         }
         $('.Link').on('click', handleClick);
         const handleCLickPrev = function(){
-            var curPage = $(".active").html();
-            if (curPage!=1) curPage -= 1;
-            // this.getData(this.pattern, curPage);
+            var curPage = null
+            const url = window.location.href;
+            url.replace(/^http:\/\/localhost:3001\/search\/(.*?)\//, (match, page) => {
+                curPage = parseInt(page)+1;
+            })
+
+            if (curPage!=0) curPage -= 1;
+            
+            var value = $('input').val();
+            fetch(`http://localhost:3001/search/${value}/${curPage-1}`)
+            .then(response => {
+                window.location.href = `http://localhost:3001/search/${value}/${curPage-1}`;
+            })
+            
 
             $(`.active`).removeClass('active');
             $(`.page-link`).get().forEach((element, index) => {
@@ -68,9 +107,18 @@
         }
         $('.Previous').on('click', handleCLickPrev);
         const handleCLickNext = function(){
-            var curPage = parseInt($(`.active`).html());
-            if (curPage!=this.data.total_page) curPage += 1;
-            // this.getData(this.pattern, curPage);
+            var curPage = null
+            const url = window.location.href;
+            url.replace(/^http:\/\/localhost:3001\/search\/(.*?)\//, (match, page) => {
+                curPage = parseInt(page)+1;
+            })
+            curPage += 1;
+            
+            var value = $('input').val();
+            fetch(`http://localhost:3001/search/${value}/${curPage-1}`)
+            .then(response => {
+                window.location.href = `http://localhost:3001/search/${value}/${curPage-1}`;
+            })
 
             $(`.page-link`).removeClass('active');
             $(`.page-link`).get().forEach((element, index) => {

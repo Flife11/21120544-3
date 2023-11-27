@@ -106,6 +106,23 @@ const createTable = async() => {
         db.query(queryA);
         const columnA = ['id', 'name', 'role', 'image', 'summary', 'birthDate'];
 
+        // ---Review
+        
+        const queryR = `
+        CREATE TABLE IF NOT EXISTS public."Review"
+        (
+            id integer NOT NULL,
+            "movieID" character varying(50),
+            username character varying(500) COLLATE pg_catalog."default",
+            "warningSpoilers" boolean ,
+            date character varying(50) COLLATE pg_catalog."default",
+            rate character varying(500) COLLATE pg_catalog."default",
+            "title" character varying(500) COLLATE pg_catalog."default",
+            "content" character varying(100000) COLLATE pg_catalog."default",
+            CONSTRAINT "Review_pkey" PRIMARY KEY (id)
+        )`
+        db.query(queryR);
+        const columnR = ['id', 'movieID', 'username', 'warningSpoilers', 'date', 'rate', 'title', 'content'];
         // ---Movie_Actor
         
         const doesTableExist = async (tableName) => {
@@ -125,6 +142,21 @@ const createTable = async() => {
         // -------Insert
         waitForExist(doesTableExist, insertData, ['Movie'], [data.Movies, 'Movie', columnM]);
         waitForExist(doesTableExist, insertData, ['Actor'], [data.Names, 'Actor', columnA]);
+        const reviewData = [];
+        let idCount = 0;
+        data.Reviews.forEach((element) => {
+            const movieID = element.movieId;
+            element.items.forEach(review => {
+                idCount += 1;
+                const newReview = {
+                    'id': idCount,
+                    "movieID": movieID,
+                    ...review,
+                }
+                reviewData.push(newReview);
+            });
+        })
+        waitForExist(doesTableExist, insertData, ['Review'], [reviewData, 'Review', columnR]);
 
 
     } catch (error) {
@@ -134,6 +166,7 @@ const createTable = async() => {
     }
     
 }
+
 
 const checkExistDatabase = async() => {
 
@@ -220,11 +253,34 @@ module.exports = {
             dbcn.done();
         }
     },
+    getReviewByMovieID: async(id) => {
+        let dbcn = null;
+        try {
+            // if (tbName=='Actor') console.log(id);
+            dbcn = await db.connect();
+            const query = `SELECT * FROM "Review" WHERE "movieID"='${id}'`;
+            const data = await db.any(query);
+            return data;
+        } catch (error) {
+            throw error
+        } finally {
+            dbcn.done();
+        }
+    },
     search: async (name, offset, tbName, colName) => {
         let dbcn = null;
         try {
             // console.log(name, offset, tbName, colName)
             dbcn = await db.connect();
+            const query2 = `
+            (SELECT *
+            FROM "${tbName}"
+            WHERE "${colName}" LIKE '%${name}%')
+            `
+            const full = await db.any(query2);
+            const length = full.length;
+            if (offset<0) offset = 0;
+            if (offset*9>=length) offset-=1;
             const query = `
             SELECT * 
             FROM
@@ -234,7 +290,38 @@ module.exports = {
             LIMIT 9
             OFFSET ${offset*9};`
             const data = await db.any(query);
-            return data;
+
+            const n = Array.from({ length: length / 9 + ((length%9==0) ? 0 : 1)}, (_, i) => i + 1);
+            return {"Movies": data, n: n};
+        } catch (error) {
+            throw error
+        } finally {
+            dbcn.done();
+        }
+    },
+    getReviewByOffset: async (offset, movieID) => {
+        let dbcn = null;
+        try {
+            // console.log(name, offset, tbName, colName)
+            dbcn = await db.connect();
+            const query2 = `SELECT * FROM "Review" WHERE "movieID"='${movieID}'`
+            const full = await db.any(query2);
+            const length = full.length;
+            console.log(offset);
+            if (offset<0) offset = 0;
+            if (offset*4>=length && offset!=0) offset-=1;
+            // console.log(offset, length);
+
+            const query = `
+            SELECT * FROM
+            (SELECT * FROM "Review" WHERE "movieID"='${movieID}')
+            LIMIT 4
+            OFFSET ${offset*4};`
+            const data = await db.any(query);
+            console.log(data.length, 1);
+
+            const n = Array.from({ length: length / 4 + ((length%4==0) ? 0 : 1)}, (_, i) => i + 1);
+            return {"Reviews": data, n: n};
         } catch (error) {
             throw error
         } finally {

@@ -22,22 +22,28 @@
                     <h2 class="card-title">21544{ fullTitle }</h2>
                     <div class="d-flex">
                         21544{for g in genreList}
-                            <div class="genre rounded-pill">21544{ g }</div>
+                            <div class="genre rounded-pill">21544{ g.g }</div>
                         {/for}
                     </div>
                     <p class="card-text fs-4">21544{ plot }</p>   
-                    <div class="fs-5">
+                    <div class="fs-5 mt-2">
                         <b>Companies: </b> 21544{ companies }
                     </div>  
-                    <div class="fs-5">
+                    <div class="fs-5 mt-2">
                         <b>Year: </b> 21544{ year }
                     </div>      
-                    <div class="fs-5 align-items-center">
+                    <div class="fs-5 mt-2">
                         <b>IMDB Rating: </b> 21544{ imDbRating }                        
                     </div>    
-                    <div class="fs-5 align-items-center">
+                    <div class="fs-5 mt-2">
                         <b>Box Office: </b> 21544{ boxOffice }                                                  
                     </div>     
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-warning">Add to favorite</button>   
+                    </div>
+                    <a href="/review/21544{ id }/0" class="fs-5 mt-3">
+                        <b>Review</b> 
+                    </a> 
                 </div>
             </div>
         </div>

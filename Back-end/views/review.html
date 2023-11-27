@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../style.css">
+    <script src="https://kit.fontawesome.com/6879b33e1d.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>Document</title>
+</head>
+<body>
+    21544{+header}
+    21544{+nav}
+    21544{for r in Reviews}
+    <div class="d-flex flex-wrap align-item-center justify-content-between">
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="card-body">
+                        <h3>21544{ r.username }</h3>
+                        <p>Date: 21544{ r.date }</p>
+                    </div>
+                    <div class="card-body">                    
+                        <div class="card-title fs-3">21544{ r.title }</div>                                           
+                        <div class="fs-5">
+                            21544{ r.content }
+                        </div>                                               
+                    </div>
+                </div>
+            </div>
+        </div>
+    {/for}
+
+    <nav class="d-flex justify-content-center" aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item">
+            <a class="page-link Previous" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+            </li>
+            21544{for it in n}
+                <li class="page-item"><div class="page-link Link active">21544{ it.it }</div></li>
+            {/for}
+            
+            <li class="page-item">
+            <a class="page-link Next" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+            </li>
+        </ul>
+    </nav>
+
+    <script>
+        let ID = null;
+        let Page = null;
+        const url = window.location.href;
+        window.onload = function() {            
+            let curPage = null
+            url.replace(/^http:\/\/localhost:3001\/review\/(.*?)\/(.*?)$/, (match, id, page) => {
+                ID = id;
+                Page = parseInt(page)+1;
+                curPage = parseInt(page)+1;
+            })
+            $(`.active`).removeClass('active');
+            $(`.page-link`).get().forEach((element, index) => {
+                if (parseInt($(element).html())==curPage) $(element).addClass('active');
+            }); 
+            // console.log(window.location.href);
+        }
+    
+
+        const handleClick = function(e) {
+            e.preventDefault();
+            $(".active").removeClass("active");
+            $(e.target).addClass("active");
+            var page = parseInt($(e.target).html());
+            
+            fetch(`http://localhost:3001/review/${ID}/${page-1}`)
+            .then(response => {
+                window.location.href = `http://localhost:3001/review/${ID}/${page-1}`;
+            })
+            // this.getData(this.pattern, page);
+        }
+        $('.Link').on('click', handleClick);
+        const handleCLickPrev = function(){
+            var curPage = Page;
+            if (curPage!=0) curPage -= 1;
+        
+            fetch(`http://localhost:3001/review/${ID}/${curPage-1}`)
+            .then(response => {
+                window.location.href = `http://localhost:3001/review/${ID}/${curPage-1}`;
+            })
+            // this.getData(this.pattern, curPage);
+
+            $(`.active`).removeClass('active');
+            $(`.page-link`).get().forEach((element, index) => {
+                if (parseInt($(element).html())==curPage) $(element).addClass('active');
+            });
+        }
+        $('.Previous').on('click', handleCLickPrev);
+        const handleCLickNext = function(){
+            var curPage = Page;
+            curPage += 1;
+            
+            fetch(`http://localhost:3001/review/${ID}/${curPage-1}`)
+            .then(response => {
+                window.location.href = `http://localhost:3001/review/${ID}/${curPage-1}`;
+            })
+            // this.getData(this.pattern, curPage);
+
+            $(`.page-link`).removeClass('active');
+            $(`.page-link`).get().forEach((element, index) => {
+                if (parseInt($(element).html())==curPage) $(element).addClass('active');
+            });
+        }
+        $('.Next').on('click', handleCLickNext);
+    </script>
+</body>
+</html>

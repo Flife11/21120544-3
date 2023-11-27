@@ -30,17 +30,18 @@ const funcFor1 = (match, p1, arr='default', render) => {
     const keys = []
     render = render.replace(new RegExp(`\{ ${p1.trim()}\.`, 'g'), "{ ");
     render.replace(/21544\{ (.*?) \}/g, (match, key) => keys.push(key));
-    console.log(keys);
-    console.log(render);
+    // console.log(keys);
+    // console.log(render);
     if (keys[0]===p1) {
         let result = '';        
-        console.log(arr, 1, options[arr.trim()]);
+        // console.log(arr, 1, options[arr.trim()]);
         // console.log(options);
         for (let d of options[arr.trim()]) {
             result += render.replace(/21544\{ (.*?) \}/g, d);
         }
         return result
     } else {
+        // console.log(options[arr.trim()]);
         let result = '';
         for (let index in options[arr.trim()]) {
             if (index==0) options.index = true;
@@ -55,6 +56,7 @@ const funcFor1 = (match, p1, arr='default', render) => {
             // console.log(r, 3);
             // console.log(r.replace(/21544\{ (.*?) \}/g, funcVar), 4);
         }
+        // console.log(result);
         return result
     }
 

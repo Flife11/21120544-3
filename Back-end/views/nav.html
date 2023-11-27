@@ -12,19 +12,40 @@
 <body>
     <nav class="navbar bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand">Navbar</a>
+            <a href="/" class="navbar-brand"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door" viewBox="0 0 16 16">
+                <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4z"/>
+              </svg></a>
+            <h3>21544</h3>
             <div class="d-flex" role="search">
-                <input class="form-control me-2 Search" type="search" placeholder="Search" aria-label="Search">
+                <input id="myInput" class="form-control me-2 Search" type="search" placeholder="Search" aria-label="Search">
                 <button click="handleClick" class="btn btn-outline-success btn-search" type="submit">Search</button>
             </div>
         </div>
     </nav>
 
     <script>
+        var myInput = document.getElementById("myInput");
+
+        // On page load, if there is a saved value, update the input field
+        window.onload = function() {
+        if (sessionStorage.getItem("autosave")) {
+                myInput.value = sessionStorage.getItem("autosave");
+                console.log(myInput);
+            }
+        }
+
+        // When the input field changes, save the value
+        myInput.addEventListener("keyup", function() {
+            sessionStorage.setItem("autosave", myInput.value);
+        });
+
         const Search = function(){
             var value = $('input').val();
             console.log(value);
-            fetch(`http://localhost:3001/search/${value}/0`);
+            fetch(`http://localhost:3001/search/${value}/0`)
+            .then(response => {
+                window.location.href = `http://localhost:3001/search/${value}/0`;
+            })
             // this.$emit('changeToSearch', value);
         }
         $('.btn-search').on('click', Search);

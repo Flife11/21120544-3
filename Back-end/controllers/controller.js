@@ -1,4 +1,5 @@
-const Movie = require('../models/Movie')
+const Movie = require('../models/Movie');
+const Review = require('../models/Review');
 
 const RenderHome = async(req, res, next) => {
     try {
@@ -30,12 +31,15 @@ const RenderDetail = async(req, res, next) => {
     }
 }
 
+var searchValue = "";
 const RenderSearch = async(req, res, next) => {
     try {
-        const name = req.params.name;
+        const name = req.params.name || searchValue;
+        // console.log(name, req.params.name, searchValue);
+        searchValue = name;
         const page = req.params.page;
         if (!(page==='undefined')) {
-            console.log(req.params);
+            // console.log(req.params);
             const Movies = await Movie.search(name, page);
             // console.log(Movies);
             res.render('search', Movies);
@@ -45,4 +49,21 @@ const RenderSearch = async(req, res, next) => {
     }
 }
 
-module.exports = {RenderHome, RenderDetail, RenderSearch};
+const RenderReview = async(req, res, next) => {
+    try {
+        const id = req.params.id;
+        const page = req.params.page;
+        console.log(id);
+        if (!(id==='undefined')) {
+            // console.log(req.params);
+            const Reviews = await Review.getReviewByOffset(page, id);
+            // console.log(Reviews);
+            res.render('review', Reviews);
+            // res.send(JSON.stringify(Reviews));
+        }
+    } catch(error) {
+        next(error);
+    }
+}
+
+module.exports = {RenderHome, RenderDetail, RenderSearch, RenderReview};
